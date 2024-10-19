@@ -60,6 +60,7 @@ def _class_definitions_order_check_for_class(
                         ),
                         line=get_line(statement.lark_node),
                         column=get_column(statement.lark_node),
+                        path="",
                     )
                 )
         except ValueError:
@@ -74,6 +75,7 @@ def _class_definitions_order_check_for_class(
                     ).format(current_section, statement_section),
                     line=get_line(statement.lark_node),
                     column=get_column(statement.lark_node),
+                    path="",
                 )
             )
     return problems

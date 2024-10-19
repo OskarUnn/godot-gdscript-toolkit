@@ -10,10 +10,13 @@ Usage:
 
 Options:
   -d --dump-default-config   Dump default config to 'gdlintrc' file
+     --gl-code-quality       Generate 'gl-code-quality-report.json' file
   -v --verbose               Show extra prints
   -h --help                  Show this screen.
   --version                  Show version.
 """
+
+import json
 import sys
 import os
 import logging
@@ -27,6 +30,7 @@ import yaml
 from docopt import docopt
 
 from gdtoolkit.linter import lint_code, DEFAULT_CONFIG
+from gdtoolkit.linter.problem import Problem
 from gdtoolkit.linter.problem_printer import print_problem
 from gdtoolkit.common.exceptions import (
     lark_unexpected_token_to_str,
@@ -57,13 +61,22 @@ def main():
     _log_config_entries(config)
     _update_config_with_missing_entries_inplace(config)
 
-    problems_total = 0
-
     files: List[Path] = find_gd_files_from_paths(
         arguments["<path>"], excluded_directories=set(config["excluded_directories"])
     )
+
+    problems: list[Problem] = []
+    problems_total = 0
     for file_path in files:
-        problems_total += _lint_file(file_path, config)
+        p = _lint_file(file_path, config)
+        if isinstance(p, int):
+            problems_total += p
+        elif isinstance(p, list):
+            problems += p
+            problems_total += len(p)
+
+    if arguments["--gl-code-quality"]:
+        _save_problems_to_json(problems)
 
     if problems_total > 0:
         print(
@@ -127,15 +140,16 @@ def _update_config_with_missing_entries_inplace(config: dict) -> None:
             config[key] = DEFAULT_CONFIG[key]
 
 
-def _lint_file(file_path: str, config: MappingProxyType) -> int:
+def _lint_file(file_path: str, config: MappingProxyType) -> list[Problem] | int:
     try:
         with open(file_path, "r", encoding="utf-8") as handle:
             content = handle.read()
             problems = lint_code(content, config)
             if len(problems) > 0:  # TODO: friendly frontend like in halint
                 for problem in problems:
+                    problem.path = file_path
                     print_problem(problem, file_path)
-            return len(problems)
+            return problems
     except OSError as exception:
         print(
             "Cannot open file '{}': {}".format(file_path, exception.strerror),
@@ -158,6 +172,11 @@ def _lint_file(file_path: str, config: MappingProxyType) -> int:
             file=sys.stderr,
         )
         return 1
+
+
+def _save_problems_to_json(problems: list[Problem]) -> None:
+    with open("gl-code-quality-report.json", "w", encoding="utf-8") as json_file:
+        json.dump([problem.to_dict() for problem in problems], json_file, indent=4)
 
 
 if __name__ == "__main__":

@@ -52,6 +52,7 @@ def _max_line_length_check(threshold, tab_characters, code: str) -> List[Problem
                     ),
                     line=line_number + 1,
                     column=0,
+                    path="",
                 )
             )
     return problems
@@ -69,6 +70,7 @@ def _max_file_lines_check(threshold, code: str) -> List[Problem]:
                 ),
                 line=len(lines),
                 column=0,
+                path="",
             )
         )
     return problems
@@ -85,6 +87,7 @@ def _trailing_ws_check(code: str) -> List[Problem]:
                     description="Trailing whitespace(s)",
                     line=line_number + 1,
                     column=0,
+                    path="",
                 )
             )
     return problems
@@ -101,6 +104,7 @@ def _mixed_tabs_and_spaces_check(code: str) -> List[Problem]:
                     description="Mixed tabs and spaces",
                     line=line_number + 1,
                     column=0,
+                    path="",
                 )
             )
     return problems

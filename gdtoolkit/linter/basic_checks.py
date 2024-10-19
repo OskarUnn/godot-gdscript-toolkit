@@ -54,6 +54,7 @@ def _unnecessary_pass_check(parse_tree: Tree) -> List[Problem]:
                             description='"pass" statement not necessary',
                             line=get_line(pass_stmt),
                             column=get_column(pass_stmt),
+                            path="",
                         )
                     )
     return problems
@@ -79,6 +80,7 @@ def _expression_not_assigned_check(parse_tree: Tree) -> List[Problem]:
                     ),
                     line=get_line(actual_expression),
                     column=get_column(actual_expression),
+                    path="",
                 )
             )
     return problems
@@ -107,6 +109,7 @@ def _duplicated_load_check(parse_tree: Tree) -> List[Problem]:
                         description="duplicated loading of {}".format(loaded_string),
                         line=get_line(string_rule),
                         column=get_column(string_rule),
+                        path="",
                     )
                 )
             else:
@@ -152,6 +155,7 @@ def _unused_argument_check(parse_tree: Tree) -> List[Problem]:
                             ),
                             line=get_line(argument_tokens[argument]),  # type: ignore
                             column=get_column(argument_tokens[argument]),  # type: ignore
+                            path="",
                         )
                     )
     return problems
@@ -168,6 +172,7 @@ def _comparison_with_itself_check(parse_tree: Tree) -> List[Problem]:
                     description="Redundant comparison",
                     line=get_line(comparison),
                     column=get_column(comparison),
+                    path="",
                 )
             )
     return problems

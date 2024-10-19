@@ -37,6 +37,7 @@ def _check_elif_problems(if_stmt: Tree) -> List[Problem]:
                 description='Unnecessary "elif" after "return"',
                 line=get_line(elif_branch),
                 column=get_column(elif_branch),
+                path="",
             )
         )
     return problems
@@ -75,6 +76,7 @@ def _check_else_problems(if_stmt: Tree, parent_var_names: List[str]) -> List[Pro
             description='Unnecessary "else" after "return"',
             line=get_line(else_branch),
             column=get_column(else_branch),
+            path="",
         )
     ]
 

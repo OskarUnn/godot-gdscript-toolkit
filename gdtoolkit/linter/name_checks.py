@@ -217,6 +217,7 @@ def _generic_name_check(
                     description=description_template.format(name),
                     line=get_line(name_token),
                     column=get_column(name_token),
+                    path="",
                 )
             )
     return problems

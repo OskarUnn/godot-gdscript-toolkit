@@ -47,6 +47,7 @@ def _function_args_num_check(threshold: int, ast: AbstractSyntaxTree) -> List[Pr
                     ),
                     line=get_line(function.lark_node),
                     column=get_column(function.lark_node),
+                    path="",
                 )
             )
     return problems
@@ -72,6 +73,7 @@ def _max_public_methods_check(threshold: int, ast: AbstractSyntaxTree) -> List[P
                     ),
                     line=get_line(a_class.lark_node),
                     column=get_column(a_class.lark_node),
+                    path="",
                 )
             )
     return problems
@@ -94,6 +96,7 @@ def _max_returns_check(threshold: int, ast: AbstractSyntaxTree) -> List[Problem]
                     ),
                     line=get_line(returns[-1].lark_node),
                     column=get_column(returns[-1].lark_node),
+                    path="",
                 )
             )
     return problems
